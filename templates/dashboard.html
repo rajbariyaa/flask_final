@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}Flight Delay Predictor Dashboard{% endblock %}
+
+{% block extra_css %}
+.grid-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.info-box {
+    background: #e3f2fd;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.warning-box {
+    background: #fff3cd;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+@media (max-width: 768px) {
+    .grid-form {
+        grid-template-columns: 1fr;
+    }
+}
+{% endblock %}
+
+{% block content %}
+<div style="text-align: center; padding: 20px 0;">
+    <h1>✈️ Flight Delay Predictor with Weather Analysis</h1>
+    <p>Get accurate flight delay predictions powered by AI and real-time weather data</p>
+</div>
+
+<div class="prediction-form">
+    <h2>Flight Details</h2>
+    
+    <form method="POST" action="{{ url_for('predict') }}">
+        <div class="grid-form">
+            <div class="form-group">
+                <label for="origin">Origin Airport Code *</label>
+                <input type="text" id="origin" name="origin" placeholder="e.g., JFK" maxlength="3" required style="text-transform: uppercase;">
+            </div>
+            
+            <div class="form-group">
+                <label for="dest">Destination Airport Code *</label>
+                <input type="text" id="dest" name="dest" placeholder="e.g., LAX" maxlength="3" required style="text-transform: uppercase;">
+            </div>
+            
+            <div class="form-group">
+                <label for="airline">Airline *</label>
+                <select id="airline" name="airline" required>
+                    <option value="">Select Airline</option>
+                    {% for airline in airlines %}
+                        <option value="{{ airline }}">{{ airline }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="flight_date">Flight Date *</label>
+                <input type="date" id="flight_date" name="flight_date" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="departure_time">Scheduled Departure Time *</label>
+                <input type="time" id="departure_time" name="departure_time" value="14:00" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="arrival_time">Scheduled Arrival Time *</label>
+                <input type="time" id="arrival_time" name="arrival_time" value="17:00" required>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <button type="submit" class="button" style="font-size: 16px; padding: 12px 24px;">
+                Predict Delay ✈️
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="info-box">
+    <h3>ℹ️ How it works</h3>
+    <ul style="margin: 10px 0; padding-left: 20px;">
+        <li>Enter your flight details above</li>
+        <li>Our AI analyzes weather conditions and historical data</li>
+        <li>Get predictions with detailed weather impact analysis</li>
+        <li>Use future dates for forecast-based predictions</li>
+    </ul>
+</div>
+
+<div class="warning-box">
+    <h3>⚠️ Airport Codes</h3>
+    <p>Use standard 3-letter IATA codes (e.g., JFK for John F. Kennedy, LAX for Los Angeles International, ORD for Chicago O'Hare)</p>
+    <p><strong>Popular airports:</strong> JFK, LAX, ORD, ATL, DFW, DEN, SFO, SEA, MIA, BOS, LGA, PHX, CLT, MCO, LAS, BWI, DCA, IAD, MSP, DTW</p>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Set tomorrow as the default date
+document.addEventListener('DOMContentLoaded', function() {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const formattedDate = tomorrow.toISOString().split('T')[0];
+    document.getElementById('flight_date').value = formattedDate;
+    
+    // Auto-uppercase airport codes
+    document.getElementById('origin').addEventListener('input', function(e) {
+        e.target.value = e.target.value.toUpperCase();
+    });
+    
+    document.getElementById('dest').addEventListener('input', function(e) {
+        e.target.value = e.target.value.toUpperCase();
+    });
+});
+</script>
+{% endblock %}
